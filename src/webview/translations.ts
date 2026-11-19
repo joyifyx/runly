@@ -179,4 +179,3 @@ export function translate(language: Language, key: MessageKey, values: Record<st
     Object.prototype.hasOwnProperty.call(values, name) ? String(values[name]) : placeholder
   );
 }
-
