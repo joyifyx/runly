@@ -144,7 +144,8 @@ You can open Runly in any of the following ways:
 ---
 
 ### 5. How to Build & Connect Workflow Nodes
-- **Add Nodes**: Click any action icon in the top-left floating toolbar (**Command**, **Terminal**, **File**, **URL**, **Task**, **Delay**, **Condition**, **Notification**, **Script**).
+- **Add Nodes**: Use the left **Node library**, organized into **Triggers**, **Actions**, **Iteration & conditionals**, and **Artificial Intelligence**. Expand or collapse categories and click an available node to add it. The panel button in the canvas header toggles the library; on narrow views it overlays the canvas.
+- **Available Nodes**: All existing actions remain available, including **VS Code Command**. **Manual Trigger** uses the existing Start node, and **If Condition** uses the existing Condition node (also retained under Actions). Cron/Webhook triggers, Filter/ForEach/Switch/Until, and AI nodes are disabled and marked **Coming soon**; this layout update does not implement their execution.
 - **Connect Nodes**: Click and drag from the circular output handle at the bottom of one node to the input handle at the top of another node.
 - **Configure Parameters**: Click any node on the canvas to open the **Properties Panel** on the right side. Customize shell commands, working directories, timeouts, environment variables, or error policies (`stop` vs `continue`).
 - **Auto-Layout**: Click **`Auto Layout`** in the top toolbar to automatically organize your DAG neatly.

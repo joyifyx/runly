@@ -14,22 +14,15 @@ import {
 import '@xyflow/react/dist/style.css';
 import { CustomNode } from '../nodes/CustomNode';
 import { NodePropertiesPanel } from './NodePropertiesPanel';
-import { Workflow, WorkflowNode } from '../../models/Workflow';
-import { ActionType } from '../../models/Node';
+import { Workflow } from '../../models/Workflow';
+import { ActionType, WorkflowNode } from '../../models/Node';
+import { NodeLibrary } from './NodeLibrary';
 import { useTranslation } from '../i18n';
 import {
   Play,
   Save,
   Square,
-  Terminal,
-  SquareTerminal,
-  FileText,
-  Globe,
-  CheckSquare,
-  Clock,
-  Bell,
-  GitBranch,
-  Code,
+  PanelLeft,
   LayoutGrid
 } from 'lucide-react';
 
@@ -80,6 +73,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [workflowName, setWorkflowName] = useState(workflow.name);
+  const [libraryOpen, setLibraryOpen] = useState(true);
 
   // Connection handler
   const onConnect = useCallback(
@@ -182,27 +176,27 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+    <div className="workflow-builder">
       {/* Canvas Action Bar Header */}
-      <div
-        style={{
-          height: 48,
-          backgroundColor: 'var(--bg-secondary)',
-          borderBottom: '1px solid var(--border)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 16px'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="workflow-builder-header">
+        <div className="workflow-builder-title">
+          <button
+            className="btn btn-secondary"
+            aria-label={t('Node library')}
+            title={t('Node library')}
+            aria-expanded={libraryOpen}
+            aria-controls="node-library"
+            onClick={() => setLibraryOpen((open) => !open)}
+          >
+            <PanelLeft size={14} />
+          </button>
           <input
             type="text"
             className="input-field"
             value={workflowName}
             aria-label={t('Workflow name')}
             onChange={(e) => setWorkflowName(e.target.value)}
-            style={{ fontWeight: 600, fontSize: 13, width: 220 }}
+            style={{ fontWeight: 600, fontSize: 13 }}
           />
         </div>
 
@@ -225,53 +219,9 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         </div>
       </div>
 
-      {/* Main Canvas + Floating Action Palette */}
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-        {/* Action Palette Toolbar */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 16,
-            left: 16,
-            zIndex: 5,
-            backgroundColor: 'var(--bg-secondary)',
-            border: '1px solid var(--border)',
-            borderRadius: 8,
-            padding: 8,
-            display: 'flex',
-            gap: 6,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-          }}
-        >
-          <button className="btn-icon" title={t('Add Command Node')} onClick={() => handleAddNode('command')}>
-            <Terminal size={16} />
-          </button>
-          <button className="btn-icon" title={t('Add Terminal Node')} onClick={() => handleAddNode('terminal')}>
-            <SquareTerminal size={16} />
-          </button>
-          <button className="btn-icon" title={t('Add File Node')} onClick={() => handleAddNode('file')}>
-            <FileText size={16} />
-          </button>
-          <button className="btn-icon" title={t('Add URL Node')} onClick={() => handleAddNode('url')}>
-            <Globe size={16} />
-          </button>
-          <button className="btn-icon" title={t('Add Task Node')} onClick={() => handleAddNode('task')}>
-            <CheckSquare size={16} />
-          </button>
-          <button className="btn-icon" title={t('Add Delay Node')} onClick={() => handleAddNode('delay')}>
-            <Clock size={16} />
-          </button>
-          <button className="btn-icon" title={t('Add Condition Node')} onClick={() => handleAddNode('condition')}>
-            <GitBranch size={16} />
-          </button>
-          <button className="btn-icon" title={t('Add Notification Node')} onClick={() => handleAddNode('notification')}>
-            <Bell size={16} />
-          </button>
-          <button className="btn-icon" title={t('Add Script Node')} onClick={() => handleAddNode('script')}>
-            <Code size={16} />
-          </button>
-        </div>
-
+      <div className="workflow-builder-workspace">
+        {libraryOpen && <NodeLibrary onAddNode={handleAddNode} onClose={() => setLibraryOpen(false)} />}
+        <div className="workflow-builder-canvas">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -299,6 +249,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
           onDeleteNode={handleDeleteNode}
           onClose={() => setSelectedNodeId(null)}
         />
+        </div>
       </div>
     </div>
   );
