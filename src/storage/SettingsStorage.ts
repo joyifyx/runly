@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 
 export interface RunlySettings {
+  language: 'en' | 'zh-CN';
+  navigationPosition: 'top' | 'left';
   defaultShell: string;
   confirmImportedWorkflows: boolean;
   showNotifications: boolean;
@@ -14,6 +16,8 @@ export class SettingsStorage {
   public getSettings(): RunlySettings {
     const config = vscode.workspace.getConfiguration('runly');
     return {
+      language: config.get<RunlySettings['language']>('language', 'en'),
+      navigationPosition: config.get<RunlySettings['navigationPosition']>('navigationPosition', 'left'),
       defaultShell: config.get<string>('defaultShell', ''),
       confirmImportedWorkflows: config.get<boolean>('confirmImportedWorkflows', true),
       showNotifications: config.get<boolean>('showNotifications', true),

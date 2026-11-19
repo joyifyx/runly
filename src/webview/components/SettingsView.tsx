@@ -1,6 +1,7 @@
 import React from 'react';
 import { RunlySettings } from '../../storage/SettingsStorage';
 import { Settings } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 interface SettingsViewProps {
   settings: RunlySettings;
@@ -11,14 +12,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   settings,
   onUpdateSetting
 }) => {
+  const t = useTranslation();
   return (
     <div style={{ padding: 24, height: '100%', overflowY: 'auto', maxWidth: 800, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
         <h2 style={{ fontSize: 18, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Settings size={20} /> Runly Settings
+          <Settings size={20} /> {t('Runly Settings')}
         </h2>
         <p style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 4 }}>
-          Manage extension preferences, execution defaults, and security configurations.
+          {t('Manage extension preferences, execution defaults, and security configurations.')}
         </p>
       </div>
 
@@ -34,23 +36,68 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         }}
       >
         <div>
+          <label htmlFor="runly-language" style={{ display: 'block', fontWeight: 500, marginBottom: 4, fontSize: 13 }}>
+            {t('Language')}
+          </label>
+          <select
+            id="runly-language"
+            className="input-field"
+            value={settings.language}
+            onChange={(e) => {
+              const language = e.target.value;
+              if (language === 'en' || language === 'zh-CN') {
+                onUpdateSetting('language', language);
+              }
+            }}
+          >
+            <option value="en">English</option>
+            <option value="zh-CN">中文（简体）</option>
+          </select>
+          <p style={{ fontSize: 11, color: 'var(--fg-muted)', marginTop: 4 }}>
+            {t('Choose the display language for the Runly interface.')}
+          </p>
+        </div>
+        <div>
+          <label htmlFor="navigation-position" style={{ display: 'block', fontWeight: 500, marginBottom: 4, fontSize: 13 }}>
+            {t('Navigation Position')}
+          </label>
+          <select
+            id="navigation-position"
+            className="input-field"
+            value={settings.navigationPosition}
+            onChange={(e) => {
+              const position = e.target.value;
+              if (position === 'top' || position === 'left') {
+                onUpdateSetting('navigationPosition', position);
+              }
+            }}
+          >
+            <option value="top">{t('Top')}</option>
+            <option value="left">{t('Left')}</option>
+          </select>
+          <p style={{ fontSize: 11, color: 'var(--fg-muted)', marginTop: 4 }}>
+            {t('Place the navigation above the content or in a left sidebar.')}
+          </p>
+        </div>
+
+        <div>
           <label style={{ display: 'block', fontWeight: 500, marginBottom: 4, fontSize: 13 }}>
-            Default Shell
+            {t('Default Shell')}
           </label>
           <input
             type="text"
             className="input-field"
             value={settings.defaultShell || ''}
             onChange={(e) => onUpdateSetting('defaultShell', e.target.value)}
-            placeholder="e.g. powershell.exe, bash, zsh (leave blank for system default)"
+            placeholder={t('e.g. powershell.exe, bash, zsh (leave blank for system default)')}
           />
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontWeight: 500, fontSize: 13 }}>Confirm Imported Workflows</div>
+            <div style={{ fontWeight: 500, fontSize: 13 }}>{t('Confirm Imported Workflows')}</div>
             <div style={{ fontSize: 11, color: 'var(--fg-muted)' }}>
-              Show security review modal before running imported workflows with executable shell commands.
+              {t('Show security review modal before running imported workflows with executable shell commands.')}
             </div>
           </div>
           <input
@@ -62,9 +109,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontWeight: 500, fontSize: 13 }}>Desktop Notifications</div>
+            <div style={{ fontWeight: 500, fontSize: 13 }}>{t('Desktop Notifications')}</div>
             <div style={{ fontSize: 11, color: 'var(--fg-muted)' }}>
-              Display VS Code notification messages when a workflow completes or fails.
+              {t('Display VS Code notification messages when a workflow completes or fails.')}
             </div>
           </div>
           <input
@@ -76,9 +123,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontWeight: 500, fontSize: 13 }}>Store Workflows in Workspace</div>
+            <div style={{ fontWeight: 500, fontSize: 13 }}>{t('Store Workflows in Workspace')}</div>
             <div style={{ fontSize: 11, color: 'var(--fg-muted)' }}>
-              Save workflows as `.runly/workflows/*.runly.json` inside the project folder for Git versioning.
+              {t('Save workflows as `.runly/workflows/*.runly.json` inside the project folder for Git versioning.')}
             </div>
           </div>
           <input
@@ -90,9 +137,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontWeight: 500, fontSize: 13 }}>Smart Framework Suggestions</div>
+            <div style={{ fontWeight: 500, fontSize: 13 }}>{t('Smart Framework Suggestions')}</div>
             <div style={{ fontSize: 11, color: 'var(--fg-muted)' }}>
-              Auto-detect project dependencies and show recommended workflow templates on dashboard.
+              {t('Auto-detect project dependencies and show recommended workflow templates on dashboard.')}
             </div>
           </div>
           <input
@@ -104,7 +151,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
         <div>
           <label style={{ display: 'block', fontWeight: 500, marginBottom: 4, fontSize: 13 }}>
-            Execution History Retain Limit
+            {t('Execution History Retain Limit')}
           </label>
           <input
             type="number"

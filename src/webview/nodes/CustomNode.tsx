@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { ActionType } from '../../models/Node';
 import { ExecutionStatus } from '../../models/Execution';
+import { useTranslation } from '../i18n';
 
 const actionIconMap: Record<ActionType, React.ReactNode> = {
   start: <Play size={16} className="text-emerald-400" />,
@@ -35,6 +36,7 @@ const actionIconMap: Record<ActionType, React.ReactNode> = {
 };
 
 export const CustomNode: React.FC<NodeProps> = ({ data, selected }) => {
+  const t = useTranslation();
   const type = (data.type as ActionType) || 'command';
   const label = (data.label as string) || type.toUpperCase();
   const config = (data.config as Record<string, any>) || {};
@@ -59,15 +61,27 @@ export const CustomNode: React.FC<NodeProps> = ({ data, selected }) => {
   };
 
   const getSubtext = () => {
-    if (type === 'command') return config.command || 'No command set';
-    if (type === 'terminal') return config.command ? `> ${config.command}` : 'Open Terminal';
+    if (type === 'command') return config.command || t('No command set');
+    if (type === 'terminal') return config.command ? `> ${config.command}` : t('Open Terminal');
     if (type === 'url') return config.url || 'http://localhost';
-    if (type === 'file') return `${config.action || 'open'}: ${config.path || ''}`;
+    if (type === 'file') {
+      const actions: Record<string, string> = { open: t('open'), reveal: t('reveal'), create: t('create'), save: t('save') };
+      const action = config.action || 'open';
+      return `${Object.prototype.hasOwnProperty.call(actions, action) ? actions[action] : action}: ${config.path || ''}`;
+    }
     if (type === 'delay') return `${config.durationMs || 1000}ms`;
-    if (type === 'condition') return `${config.conditionType || 'previousSuccess'}`;
-    if (type === 'notification') return config.message || 'Notification';
-    if (type === 'task') return config.taskName || 'Task';
-    if (type === 'vscodeCommand') return config.commandId || 'Command';
+    if (type === 'condition') {
+      const conditions: Record<string, string> = {
+        previousSuccess: t('previousSuccess'), previousFailed: t('previousFailed'),
+        exitCode: t('exitCode'), fileExists: t('fileExists'), folderExists: t('folderExists'),
+        envExists: t('envExists'), os: t('os'), platform: t('platform')
+      };
+      const condition = config.conditionType || 'previousSuccess';
+      return Object.prototype.hasOwnProperty.call(conditions, condition) ? conditions[condition] : condition;
+    }
+    if (type === 'notification') return config.message || t('Notification');
+    if (type === 'task') return config.taskName || t('Task');
+    if (type === 'vscodeCommand') return config.commandId || t('Command');
     return '';
   };
 
@@ -87,7 +101,7 @@ export const CustomNode: React.FC<NodeProps> = ({ data, selected }) => {
         <div className="node-status-icon">{renderStatus()}</div>
       </div>
 
-      <div className="node-type-label">{type}</div>
+      <div className="node-type-label">{t(type)}</div>
 
       {getSubtext() && (
         <div
@@ -108,7 +122,7 @@ export const CustomNode: React.FC<NodeProps> = ({ data, selected }) => {
       {type === 'condition' ? (
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
           <div style={{ position: 'relative' }}>
-            <span style={{ fontSize: '9px', color: '#3fb950', fontWeight: 600 }}>TRUE</span>
+            <span style={{ fontSize: '9px', color: '#3fb950', fontWeight: 600 }}>{t('TRUE')}</span>
             <Handle
               type="source"
               position={Position.Bottom}
@@ -117,7 +131,7 @@ export const CustomNode: React.FC<NodeProps> = ({ data, selected }) => {
             />
           </div>
           <div style={{ position: 'relative' }}>
-            <span style={{ fontSize: '9px', color: '#f85149', fontWeight: 600 }}>FALSE</span>
+            <span style={{ fontSize: '9px', color: '#f85149', fontWeight: 600 }}>{t('FALSE')}</span>
             <Handle
               type="source"
               position={Position.Bottom}

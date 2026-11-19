@@ -16,6 +16,7 @@ import { CustomNode } from '../nodes/CustomNode';
 import { NodePropertiesPanel } from './NodePropertiesPanel';
 import { Workflow, WorkflowNode } from '../../models/Workflow';
 import { ActionType } from '../../models/Node';
+import { useTranslation } from '../i18n';
 import {
   Play,
   Save,
@@ -47,6 +48,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   onStop,
   isExecuting
 }) => {
+  const t = useTranslation();
   const nodeTypes = useMemo(() => ({ custom: CustomNode }), []);
 
   const initialNodes: Node[] = useMemo(() => {
@@ -198,25 +200,26 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
             type="text"
             className="input-field"
             value={workflowName}
+            aria-label={t('Workflow name')}
             onChange={(e) => setWorkflowName(e.target.value)}
             style={{ fontWeight: 600, fontSize: 13, width: 220 }}
           />
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <button className="btn btn-secondary" onClick={handleAutoLayout} title="Auto Layout">
-            <LayoutGrid size={14} /> Auto Layout
+          <button className="btn btn-secondary" onClick={handleAutoLayout} title={t('Auto Layout')}>
+            <LayoutGrid size={14} /> {t('Auto Layout')}
           </button>
           <button className="btn btn-secondary" onClick={handleSave}>
-            <Save size={14} /> Save
+            <Save size={14} /> {t('Save')}
           </button>
           {isExecuting ? (
             <button className="btn btn-danger" onClick={onStop}>
-              <Square size={14} /> Stop
+              <Square size={14} /> {t('Stop')}
             </button>
           ) : (
             <button className="btn btn-primary" onClick={() => onRun({ ...workflow, name: workflowName })}>
-              <Play size={14} /> Run Workflow
+              <Play size={14} /> {t('Run Workflow')}
             </button>
           )}
         </div>
@@ -240,31 +243,31 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
             boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
           }}
         >
-          <button className="btn-icon" title="Add Command Node" onClick={() => handleAddNode('command')}>
+          <button className="btn-icon" title={t('Add Command Node')} onClick={() => handleAddNode('command')}>
             <Terminal size={16} />
           </button>
-          <button className="btn-icon" title="Add Terminal Node" onClick={() => handleAddNode('terminal')}>
+          <button className="btn-icon" title={t('Add Terminal Node')} onClick={() => handleAddNode('terminal')}>
             <SquareTerminal size={16} />
           </button>
-          <button className="btn-icon" title="Add File Node" onClick={() => handleAddNode('file')}>
+          <button className="btn-icon" title={t('Add File Node')} onClick={() => handleAddNode('file')}>
             <FileText size={16} />
           </button>
-          <button className="btn-icon" title="Add URL Node" onClick={() => handleAddNode('url')}>
+          <button className="btn-icon" title={t('Add URL Node')} onClick={() => handleAddNode('url')}>
             <Globe size={16} />
           </button>
-          <button className="btn-icon" title="Add Task Node" onClick={() => handleAddNode('task')}>
+          <button className="btn-icon" title={t('Add Task Node')} onClick={() => handleAddNode('task')}>
             <CheckSquare size={16} />
           </button>
-          <button className="btn-icon" title="Add Delay Node" onClick={() => handleAddNode('delay')}>
+          <button className="btn-icon" title={t('Add Delay Node')} onClick={() => handleAddNode('delay')}>
             <Clock size={16} />
           </button>
-          <button className="btn-icon" title="Add Condition Node" onClick={() => handleAddNode('condition')}>
+          <button className="btn-icon" title={t('Add Condition Node')} onClick={() => handleAddNode('condition')}>
             <GitBranch size={16} />
           </button>
-          <button className="btn-icon" title="Add Notification Node" onClick={() => handleAddNode('notification')}>
+          <button className="btn-icon" title={t('Add Notification Node')} onClick={() => handleAddNode('notification')}>
             <Bell size={16} />
           </button>
-          <button className="btn-icon" title="Add Script Node" onClick={() => handleAddNode('script')}>
+          <button className="btn-icon" title={t('Add Script Node')} onClick={() => handleAddNode('script')}>
             <Code size={16} />
           </button>
         </div>
@@ -277,6 +280,13 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
           onConnect={onConnect}
           onNodeClick={handleNodeClick}
           nodeTypes={nodeTypes}
+          ariaLabelConfig={{
+            'controls.ariaLabel': t('Control Panel'),
+            'controls.zoomIn.ariaLabel': t('Zoom In'),
+            'controls.zoomOut.ariaLabel': t('Zoom Out'),
+            'controls.fitView.ariaLabel': t('Fit View'),
+            'controls.interactive.ariaLabel': t('Toggle Interactivity')
+          }}
           fitView
         >
           <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="#404040" />

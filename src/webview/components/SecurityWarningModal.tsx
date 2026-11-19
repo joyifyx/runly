@@ -1,6 +1,7 @@
 import React from 'react';
 import { Workflow } from '../../models/Workflow';
 import { AlertTriangle, X } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 interface SecurityWarningModalProps {
   workflow: Workflow | null;
@@ -15,6 +16,7 @@ export const SecurityWarningModal: React.FC<SecurityWarningModalProps> = ({
   onReview,
   onTrustAndRun
 }) => {
+  const t = useTranslation();
   if (!workflow) return null;
 
   const commandNodes = workflow.nodes.filter(
@@ -27,17 +29,16 @@ export const SecurityWarningModal: React.FC<SecurityWarningModalProps> = ({
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#d29922' }}>
             <AlertTriangle size={18} />
-            <span>Security Warning: Executable Commands</span>
+            <span>{t('Security Warning: Executable Commands')}</span>
           </div>
-          <button className="btn-icon" onClick={onCancel}>
+          <button className="btn-icon" onClick={onCancel} aria-label={t('Close')}>
             <X size={16} />
           </button>
         </div>
 
         <div className="modal-body">
           <p style={{ marginBottom: 12 }}>
-            This imported workflow contains executable shell commands. Please inspect the commands
-            before running them on your system.
+            {t('This imported workflow contains executable shell commands. Please inspect the commands before running them on your system.')}
           </p>
 
           <div
@@ -52,11 +53,11 @@ export const SecurityWarningModal: React.FC<SecurityWarningModalProps> = ({
             }}
           >
             <div style={{ fontWeight: 600, color: 'var(--fg-muted)', marginBottom: 6 }}>
-              FOUND COMMANDS ({commandNodes.length}):
+              {t('FOUND COMMANDS ({count}):', { count: commandNodes.length })}
             </div>
             {commandNodes.map((n) => (
               <div key={n.id} style={{ marginBottom: 4 }}>
-                • <strong>{n.label}</strong>: {n.config?.command || 'Terminal / Script'}
+                • <strong>{n.label}</strong>: {n.config?.command || t('Terminal / Script')}
               </div>
             ))}
           </div>
@@ -64,13 +65,13 @@ export const SecurityWarningModal: React.FC<SecurityWarningModalProps> = ({
 
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={onCancel}>
-            Cancel
+            {t('Cancel')}
           </button>
           <button className="btn btn-secondary" onClick={onReview}>
-            Review Workflow
+            {t('Review Workflow')}
           </button>
           <button className="btn btn-primary" onClick={onTrustAndRun}>
-            Trust & Run
+            {t('Trust & Run')}
           </button>
         </div>
       </div>

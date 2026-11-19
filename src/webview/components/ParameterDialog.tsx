@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Workflow } from '../../models/Workflow';
 import { Play, X } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 interface ParameterDialogProps {
   workflow: Workflow | null;
@@ -13,6 +14,7 @@ export const ParameterDialog: React.FC<ParameterDialogProps> = ({
   onCancel,
   onSubmit
 }) => {
+  const t = useTranslation();
   if (!workflow || !workflow.parameters || workflow.parameters.length === 0) return null;
 
   const [formState, setFormState] = useState<Record<string, any>>(() => {
@@ -37,15 +39,15 @@ export const ParameterDialog: React.FC<ParameterDialogProps> = ({
       <div className="modal-content">
         <form onSubmit={handleSubmit}>
           <div className="modal-header">
-            <span>Run {workflow.name}</span>
-            <button type="button" className="btn-icon" onClick={onCancel}>
+            <span>{t('Run {name}', { name: workflow.name })}</span>
+            <button type="button" className="btn-icon" onClick={onCancel} aria-label={t('Close')}>
               <X size={16} />
             </button>
           </div>
 
           <div className="modal-body">
             <p style={{ fontSize: 12, color: 'var(--fg-muted)', marginBottom: 14 }}>
-              Provide parameter values before executing this workflow.
+              {t('Provide parameter values before executing this workflow.')}
             </p>
 
             {workflow.parameters.map((param) => (
@@ -80,10 +82,10 @@ export const ParameterDialog: React.FC<ParameterDialogProps> = ({
 
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onCancel}>
-              Cancel
+              {t('Cancel')}
             </button>
             <button type="submit" className="btn btn-primary">
-              <Play size={14} /> Run Workflow
+              <Play size={14} /> {t('Run Workflow')}
             </button>
           </div>
         </form>

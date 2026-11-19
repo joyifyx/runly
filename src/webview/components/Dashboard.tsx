@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Workflow } from '../../models/Workflow';
 import { DetectedProject } from '../../detection/ProjectDetector';
+import { useTranslation } from '../i18n';
 import {
   Play,
   Edit3,
@@ -45,6 +46,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onToggleFavorite,
   onUseTemplate
 }) => {
+  const t = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
@@ -89,10 +91,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </div>
             <div>
               <div style={{ fontWeight: 600, fontSize: 14 }}>
-                {detectedProject.label} Project Detected
+                {t('{project} Project Detected', { project: detectedProject.label })}
               </div>
               <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 2 }}>
-                {detectedProject.description}. Recommended workflow templates ready to run.
+                {t('{description}. Recommended workflow templates ready to run.', { description: detectedProject.description })}
               </div>
             </div>
           </div>
@@ -105,13 +107,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   detectedProject.recommendedTemplates.includes(t.id)
               )
               .slice(0, 2)
-              .map((t) => (
+              .map((template) => (
                 <button
-                  key={t.id}
+                  key={template.id}
                   className="btn btn-primary"
-                  onClick={() => onUseTemplate(t)}
+                  onClick={() => onUseTemplate(template)}
                 >
-                  <Sparkles size={14} /> Use {t.name.replace(/^[^\w\s]+/, '').trim()}
+                  <Sparkles size={14} /> {t('Use {name}', { name: template.name.replace(/^[^\w\s]+/, '').trim() })}
                 </button>
               ))}
           </div>
@@ -128,18 +130,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
         }}
       >
         <div>
-          <h2 style={{ fontSize: 18, fontWeight: 600 }}>Your Workflows</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 600 }}>{t('Your Workflows')}</h2>
           <p style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 4 }}>
-            Build, execute, and manage local project automation workflows
+            {t('Build, execute, and manage local project automation workflows')}
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="btn btn-secondary" onClick={onImportWorkflow}>
-            <Upload size={14} /> Import Workflow
+            <Upload size={14} /> {t('Import Workflow')}
           </button>
           <button className="btn btn-primary" onClick={onNewWorkflow}>
-            <Plus size={14} /> New Workflow
+            <Plus size={14} /> {t('New Workflow')}
           </button>
         </div>
       </div>
@@ -161,7 +163,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             type="text"
             className="input-field"
             style={{ paddingLeft: 32 }}
-            placeholder="Search workflows..."
+            placeholder={t('Search workflows...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -172,13 +174,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
             className={`nav-tab ${selectedCategory === 'all' ? 'active' : ''}`}
             onClick={() => setSelectedCategory('all')}
           >
-            All Workflows ({workflows.length})
+            {t('All Workflows ({count})', { count: workflows.length })}
           </button>
           <button
             className={`nav-tab ${selectedCategory === 'favorites' ? 'active' : ''}`}
             onClick={() => setSelectedCategory('favorites')}
           >
-            ⭐ Favorites ({workflows.filter((w) => w.isFavorite).length})
+            ⭐ {t('Favorites ({count})', { count: workflows.filter((w) => w.isFavorite).length })}
           </button>
         </div>
       </div>
@@ -195,12 +197,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
           }}
         >
           <Layers size={40} style={{ color: 'var(--fg-muted)', marginBottom: 12 }} />
-          <h3 style={{ fontSize: 14, fontWeight: 600 }}>No workflows found</h3>
+          <h3 style={{ fontSize: 14, fontWeight: 600 }}>{t('No workflows found')}</h3>
           <p style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 4, marginBottom: 16 }}>
-            Build your first developer workflow or select a template preset.
+            {t('Build your first developer workflow or select a template preset.')}
           </p>
           <button className="btn btn-primary" onClick={onNewWorkflow}>
-            <Plus size={14} /> Create Workflow
+            <Plus size={14} /> {t('Create Workflow')}
           </button>
         </div>
       ) : (
@@ -241,7 +243,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <button
                     className="btn-icon"
                     onClick={() => onToggleFavorite(workflow)}
-                    title="Toggle Favorite"
+                    title={t('Toggle Favorite')}
                   >
                     <Star
                       size={16}
@@ -267,7 +269,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 )}
 
                 <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
-                  <span className="badge badge-queued">{workflow.nodes.length} Steps</span>
+                  <span className="badge badge-queued">{t('{count} Steps', { count: workflow.nodes.length })}</span>
                   {workflow.shortcut && (
                     <span className="badge badge-running">{workflow.shortcut}</span>
                   )}
@@ -291,28 +293,28 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <div style={{ display: 'flex', gap: 4 }}>
                   <button
                     className="btn-icon"
-                    title="Edit Workflow"
+                    title={t('Edit Workflow')}
                     onClick={() => onSelectWorkflow(workflow)}
                   >
                     <Edit3 size={14} />
                   </button>
                   <button
                     className="btn-icon"
-                    title="Duplicate Workflow"
+                    title={t('Duplicate Workflow')}
                     onClick={() => onDuplicateWorkflow(workflow.id)}
                   >
                     <Copy size={14} />
                   </button>
                   <button
                     className="btn-icon"
-                    title="Export Workflow (.runly.json)"
+                    title={t('Export Workflow (.runly.json)')}
                     onClick={() => onExportWorkflow(workflow.id)}
                   >
                     <Download size={14} />
                   </button>
                   <button
                     className="btn-icon"
-                    title="Delete Workflow"
+                    title={t('Delete Workflow')}
                     onClick={() => onDeleteWorkflow(workflow.id)}
                   >
                     <Trash2 size={14} />
@@ -323,7 +325,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   className="btn btn-primary"
                   onClick={() => onRunWorkflow(workflow)}
                 >
-                  <Play size={14} /> Run
+                  <Play size={14} /> {t('Run')}
                 </button>
               </div>
             </div>
@@ -333,7 +335,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
       {/* Preset Templates Gallery Section */}
       <div style={{ marginTop: 32 }}>
-        <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12 }}>Template Gallery</h3>
+        <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12 }}>{t('Template Gallery')}</h3>
         <div
           style={{
             display: 'grid',
@@ -357,7 +359,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div>
                 <div style={{ fontWeight: 600, fontSize: 13 }}>{tpl.name}</div>
                 <div style={{ fontSize: 11, color: 'var(--fg-muted)', marginTop: 2 }}>
-                  {tpl.nodes.length} steps • {tpl.framework}
+                  {t('{count} steps', { count: tpl.nodes.length })} • {tpl.framework}
                 </div>
               </div>
               <button
@@ -365,7 +367,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 style={{ padding: '4px 8px', fontSize: 11 }}
                 onClick={() => onUseTemplate(tpl)}
               >
-                Use
+                {t('Use')}
               </button>
             </div>
           ))}

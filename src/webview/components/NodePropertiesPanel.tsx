@@ -1,6 +1,7 @@
 import React from 'react';
 import { WorkflowNode } from '../../models/Node';
 import { Trash2, X } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 interface NodePropertiesPanelProps {
   node: WorkflowNode | null;
@@ -15,6 +16,7 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
   onDeleteNode,
   onClose
 }) => {
+  const t = useTranslation();
   if (!node) return null;
 
   const handleConfigChange = (key: string, value: any) => {
@@ -37,14 +39,14 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
   const renderConfigFields = () => {
     switch (node.type) {
       case 'start':
-        return <p style={{ fontSize: 11, color: 'var(--fg-muted)' }}>Workflow entry point node.</p>;
+        return <p style={{ fontSize: 11, color: 'var(--fg-muted)' }}>{t('Workflow entry point node.')}</p>;
 
       case 'command':
         return (
           <>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                Shell Command
+                {t('Shell Command')}
               </label>
               <textarea
                 className="input-field"
@@ -56,7 +58,7 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                Working Directory
+                {t('Working Directory')}
               </label>
               <input
                 type="text"
@@ -68,15 +70,15 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                On Error Strategy
+                {t('On Error Strategy')}
               </label>
               <select
                 className="input-field"
                 value={node.config.onError || 'stop'}
                 onChange={(e) => handleConfigChange('onError', e.target.value)}
               >
-                <option value="stop">Stop Workflow</option>
-                <option value="continue">Continue Execution</option>
+                <option value="stop">{t('Stop Workflow')}</option>
+                <option value="continue">{t('Continue Execution')}</option>
               </select>
             </div>
           </>
@@ -87,19 +89,19 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
           <>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                Terminal Name
+                {t('Terminal Name')}
               </label>
               <input
                 type="text"
                 className="input-field"
                 value={node.config.name || ''}
                 onChange={(e) => handleConfigChange('name', e.target.value)}
-                placeholder="React Dev Server"
+                placeholder={t('React Dev Server')}
               />
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                Command to Send
+                {t('Command to Send')}
               </label>
               <input
                 type="text"
@@ -111,7 +113,7 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                Working Directory
+                {t('Working Directory')}
               </label>
               <input
                 type="text"
@@ -129,22 +131,22 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
           <>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                Action
+                {t('Action')}
               </label>
               <select
                 className="input-field"
                 value={node.config.action || 'open'}
                 onChange={(e) => handleConfigChange('action', e.target.value)}
               >
-                <option value="open">Open File</option>
-                <option value="reveal">Reveal in Explorer</option>
-                <option value="create">Create File</option>
-                <option value="save">Save File / Workspace</option>
+                <option value="open">{t('Open File')}</option>
+                <option value="reveal">{t('Reveal in Explorer')}</option>
+                <option value="create">{t('Create File')}</option>
+                <option value="save">{t('Save File / Workspace')}</option>
               </select>
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                File Path
+                {t('File Path')}
               </label>
               <input
                 type="text"
@@ -157,7 +159,7 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
             {node.config.action === 'create' && (
               <div style={{ marginBottom: 12 }}>
                 <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                  File Content
+                  {t('File Content')}
                 </label>
                 <textarea
                   className="input-field"
@@ -174,7 +176,7 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
         return (
           <div style={{ marginBottom: 12 }}>
             <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-              Browser URL
+              {t('Browser URL')}
             </label>
             <input
               type="text"
@@ -190,7 +192,7 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
         return (
           <div style={{ marginBottom: 12 }}>
             <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-              Duration (milliseconds)
+              {t('Duration (milliseconds)')}
             </label>
             <input
               type="number"
@@ -206,29 +208,29 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
           <>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                Notification Type
+                {t('Notification Type')}
               </label>
               <select
                 className="input-field"
                 value={node.config.type || 'info'}
                 onChange={(e) => handleConfigChange('type', e.target.value)}
               >
-                <option value="info">Info</option>
-                <option value="success">Success</option>
-                <option value="warning">Warning</option>
-                <option value="error">Error</option>
+                <option value="info">{t('Info')}</option>
+                <option value="success">{t('Success')}</option>
+                <option value="warning">{t('Warning')}</option>
+                <option value="error">{t('Error')}</option>
               </select>
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                Message
+                {t('Message')}
               </label>
               <input
                 type="text"
                 className="input-field"
                 value={node.config.message || ''}
                 onChange={(e) => handleConfigChange('message', e.target.value)}
-                placeholder="Development server ready"
+                placeholder={t('Development server ready')}
               />
             </div>
           </>
@@ -239,32 +241,32 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
           <>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                Condition Type
+                {t('Condition Type')}
               </label>
               <select
                 className="input-field"
                 value={node.config.conditionType || 'previousSuccess'}
                 onChange={(e) => handleConfigChange('conditionType', e.target.value)}
               >
-                <option value="previousSuccess">Previous Action Succeeded</option>
-                <option value="previousFailed">Previous Action Failed</option>
-                <option value="exitCode">Exit Code Equals</option>
-                <option value="fileExists">File Exists</option>
-                <option value="folderExists">Folder Exists</option>
-                <option value="envExists">Environment Variable Exists</option>
-                <option value="os">OS / Platform Equals</option>
+                <option value="previousSuccess">{t('Previous Action Succeeded')}</option>
+                <option value="previousFailed">{t('Previous Action Failed')}</option>
+                <option value="exitCode">{t('Exit Code Equals')}</option>
+                <option value="fileExists">{t('File Exists')}</option>
+                <option value="folderExists">{t('Folder Exists')}</option>
+                <option value="envExists">{t('Environment Variable Exists')}</option>
+                <option value="os">{t('OS / Platform Equals')}</option>
               </select>
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-                Target Value / Path / Code
+                {t('Target Value / Path / Code')}
               </label>
               <input
                 type="text"
                 className="input-field"
                 value={node.config.targetValue || ''}
                 onChange={(e) => handleConfigChange('targetValue', e.target.value)}
-                placeholder="Target value or path"
+                placeholder={t('Target value or path')}
               />
             </div>
           </>
@@ -274,7 +276,7 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
         return (
           <div style={{ marginBottom: 12 }}>
             <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-              Task Name
+              {t('Task Name')}
             </label>
             <input
               type="text"
@@ -290,7 +292,7 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
         return (
           <div style={{ marginBottom: 12 }}>
             <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-              VS Code Command ID
+              {t('VS Code Command ID')}
             </label>
             <input
               type="text"
@@ -306,7 +308,7 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
         return (
           <div style={{ marginBottom: 12 }}>
             <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-              JavaScript Code
+              {t('JavaScript Code')}
             </label>
             <textarea
               className="input-field"
@@ -347,8 +349,8 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
           justifyContent: 'space-between'
         }}
       >
-        <span style={{ fontWeight: 600, fontSize: 13 }}>Node Properties</span>
-        <button className="btn-icon" onClick={onClose}>
+        <span style={{ fontWeight: 600, fontSize: 13 }}>{t('Node Properties')}</span>
+        <button className="btn-icon" onClick={onClose} aria-label={t('Close')}>
           <X size={16} />
         </button>
       </div>
@@ -356,7 +358,7 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
       <div style={{ padding: 16, overflowY: 'auto', flex: 1 }}>
         <div style={{ marginBottom: 16 }}>
           <label style={{ display: 'block', marginBottom: 4, fontSize: 11 }}>
-            Node Label
+            {t('Node Label')}
           </label>
           <input
             type="text"
@@ -376,7 +378,7 @@ export const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
             style={{ width: '100%' }}
             onClick={() => onDeleteNode(node.id)}
           >
-            <Trash2 size={14} /> Delete Node
+            <Trash2 size={14} /> {t('Delete Node')}
           </button>
         </div>
       )}

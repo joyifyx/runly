@@ -198,6 +198,20 @@
       "type": "object",
       "title": "Runly Settings",
       "properties": {
+        "runly.language": {
+          "type": "string",
+          "enum": ["en", "zh-CN"],
+          "enumDescriptions": ["English", "简体中文"],
+          "default": "en",
+          "description": "Display language for the Runly webview interface."
+        },
+        "runly.navigationPosition": {
+          "type": "string",
+          "enum": ["top", "left"],
+          "enumDescriptions": ["Show navigation above the content.", "Show navigation in a left sidebar."],
+          "default": "left",
+          "description": "Position of the Runly navigation. Changes apply immediately when selected in Runly Settings."
+        },
         "runly.defaultShell": {
           "type": "string",
           "default": "",

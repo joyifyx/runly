@@ -21,6 +21,7 @@ import {
   Plus
 } from 'lucide-react';
 import './styles/vscode.css';
+import { LanguageContext, translate } from './i18n';
 
 // Declare VS Code Webview API
 declare function acquireVsCodeApi(): {
@@ -36,6 +37,8 @@ export const App: React.FC = () => {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [history, setHistory] = useState<ExecutionRecord[]>([]);
   const [settings, setSettings] = useState<RunlySettings>({
+    language: 'en',
+    navigationPosition: 'left',
     defaultShell: '',
     confirmImportedWorkflows: true,
     showNotifications: true,
@@ -44,6 +47,11 @@ export const App: React.FC = () => {
     useWorkspaceWorkflows: true,
     showTemplateSuggestions: true
   });
+  const t = (key: Parameters<typeof translate>[1]) => translate(settings.language, key);
+
+  useEffect(() => {
+    document.documentElement.lang = settings.language;
+  }, [settings.language]);
   const [detectedProject, setDetectedProject] = useState<DetectedProject | null>(null);
 
   const [activeWorkflow, setActiveWorkflow] = useState<Workflow | null>(null);
@@ -236,7 +244,8 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="runly-app">
+    <LanguageContext.Provider value={settings.language}>
+    <div className={`runly-app navigation-${settings.navigationPosition}`}>
       {/* Top Navbar */}
       <div className="navbar">
         <div className="brand">
@@ -244,38 +253,38 @@ export const App: React.FC = () => {
           <span>RUNLY</span>
         </div>
 
-        <div className="nav-tabs">
+        <nav className="nav-tabs" aria-label={t('Runly navigation')}>
           <button
             className={`nav-tab ${activeTab === 'dashboard' ? 'active' : ''}`}
             onClick={() => setActiveTab('dashboard')}
           >
-            <LayoutDashboard size={14} /> Dashboard
+            <LayoutDashboard size={14} /> {t('Dashboard')}
           </button>
           <button
             className={`nav-tab ${activeTab === 'canvas' ? 'active' : ''}`}
             onClick={() => setActiveTab('canvas')}
           >
-            <Layers size={14} /> Builder Canvas
+            <Layers size={14} /> {t('Builder Canvas')}
           </button>
           <button
             className={`nav-tab ${activeTab === 'monitor' ? 'active' : ''}`}
             onClick={() => setActiveTab('monitor')}
           >
-            <Terminal size={14} /> Execution Monitor
+            <Terminal size={14} /> {t('Execution Monitor')}
           </button>
           <button
             className={`nav-tab ${activeTab === 'history' ? 'active' : ''}`}
             onClick={() => setActiveTab('history')}
           >
-            <History size={14} /> History
+            <History size={14} /> {t('History')}
           </button>
           <button
             className={`nav-tab ${activeTab === 'settings' ? 'active' : ''}`}
             onClick={() => setActiveTab('settings')}
           >
-            <Settings size={14} /> Settings
+            <Settings size={14} /> {t('Settings')}
           </button>
-        </div>
+        </nav>
       </div>
 
       {/* Main View Area */}
@@ -372,7 +381,7 @@ export const App: React.FC = () => {
       />
 
       {/* Parameters Dialog prior to execution */}
-      <ParameterDialog
+      {parameterDialogWorkflow && <ParameterDialog
         workflow={parameterDialogWorkflow}
         onCancel={() => setParameterDialogWorkflow(null)}
         onSubmit={(params) => {
@@ -381,7 +390,8 @@ export const App: React.FC = () => {
           }
           setParameterDialogWorkflow(null);
         }}
-      />
+      />}
     </div>
+    </LanguageContext.Provider>
   );
 };

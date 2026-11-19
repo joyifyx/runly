@@ -1,5 +1,5 @@
 :root {
-  --vscode-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --runly-font-family: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Microsoft YaHei UI', 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif);
   --bg-primary: var(--vscode-editor-background, #1e1e1e);
   --bg-secondary: var(--vscode-sideBar-background, #252526);
   --bg-tertiary: var(--vscode-editorGroupHeader-tabsBackground, #2d2d2d);
@@ -29,10 +29,16 @@ body, html, #root {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-family: var(--vscode-font-family);
+  font-family: var(--runly-font-family);
   background-color: var(--bg-primary);
   color: var(--fg-primary);
   font-size: 13px;
+  line-height: 1.5;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  line-height: inherit;
 }
 
 .runly-app {
@@ -51,6 +57,8 @@ body, html, #root {
   padding: 0 16px;
   background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 .brand {
@@ -69,6 +77,54 @@ body, html, #root {
 .nav-tabs {
   display: flex;
   gap: 4px;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.navbar .brand,
+.navbar .nav-tab {
+  flex-shrink: 0;
+}
+
+.navigation-left {
+  flex-direction: row;
+}
+
+.navigation-left .navbar {
+  width: 200px;
+  height: 100%;
+  padding: 12px 8px;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 16px;
+  border-bottom: none;
+  border-right: 1px solid var(--border);
+}
+
+.navigation-left .brand {
+  padding: 0 8px;
+}
+
+.navigation-left .nav-tabs {
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.navigation-left .nav-tab {
+  text-align: left;
+}
+
+.navbar .nav-tab:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder, #007fd4);
+  outline-offset: -1px;
+}
+
+@media (max-width: 600px) {
+  .navigation-left .navbar {
+    width: 160px;
+  }
 }
 
 .nav-tab {
@@ -100,6 +156,8 @@ body, html, #root {
 /* Layout Containers */
 .main-content {
   flex: 1;
+  min-width: 0;
+  min-height: 0;
   overflow: hidden;
   position: relative;
 }

@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { ExecutionContext } from '../../engine/ExecutionContext';
 import { ExecutionRecord } from '../../models/Execution';
+import { useTranslation } from '../i18n';
 import {
   Square,
   RotateCcw,
@@ -23,6 +24,7 @@ export const ExecutionMonitor: React.FC<ExecutionMonitorProps> = ({
   onStop,
   onRetry
 }) => {
+  const t = useTranslation();
   const logContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,9 +43,9 @@ export const ExecutionMonitor: React.FC<ExecutionMonitorProps> = ({
         }}
       >
         <Terminal size={36} style={{ marginBottom: 12 }} />
-        <div style={{ fontSize: 14, fontWeight: 600 }}>No workflow active or selected</div>
+        <div style={{ fontSize: 14, fontWeight: 600 }}>{t('No workflow active or selected')}</div>
         <p style={{ fontSize: 12, marginTop: 4 }}>
-          Run a workflow from the dashboard to monitor its live execution logs.
+          {t('Run a workflow from the dashboard to monitor its live execution logs.')}
         </p>
       </div>
     );
@@ -55,21 +57,21 @@ export const ExecutionMonitor: React.FC<ExecutionMonitorProps> = ({
 
   const renderBadge = (status: string) => {
     if (status === 'RUNNING') {
-      return <span className="badge badge-running"><Loader2 size={10} className="animate-spin" style={{ marginRight: 4 }} /> Running</span>;
+      return <span className="badge badge-running"><Loader2 size={10} className="animate-spin" style={{ marginRight: 4 }} /> {t('Running')}</span>;
     }
     if (status === 'SUCCESS') {
-      return <span className="badge badge-success"><CheckCircle2 size={10} style={{ marginRight: 4 }} /> Success</span>;
+      return <span className="badge badge-success"><CheckCircle2 size={10} style={{ marginRight: 4 }} /> {t('Success')}</span>;
     }
     if (status === 'FAILED') {
-      return <span className="badge badge-failed"><XCircle size={10} style={{ marginRight: 4 }} /> Failed</span>;
+      return <span className="badge badge-failed"><XCircle size={10} style={{ marginRight: 4 }} /> {t('Failed')}</span>;
     }
     if (status === 'CANCELLED') {
-      return <span className="badge badge-failed">Cancelled</span>;
+      return <span className="badge badge-failed">{t('Cancelled')}</span>;
     }
     if (status === 'SKIPPED') {
-      return <span className="badge badge-queued"><MinusCircle size={10} style={{ marginRight: 4 }} /> Skipped</span>;
+      return <span className="badge badge-queued"><MinusCircle size={10} style={{ marginRight: 4 }} /> {t('Skipped')}</span>;
     }
-    return <span className="badge badge-queued">Queued</span>;
+    return <span className="badge badge-queued">{t('Queued')}</span>;
   };
 
   return (
@@ -88,12 +90,12 @@ export const ExecutionMonitor: React.FC<ExecutionMonitorProps> = ({
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontWeight: 600, fontSize: 14 }}>
-              {execution.workflowName || 'Workflow Execution'}
+              {execution.workflowName || t('Workflow Execution')}
             </span>
             {renderBadge(execution.status)}
           </div>
           <div style={{ fontSize: 11, color: 'var(--fg-muted)', marginTop: 4 }}>
-            Started: {new Date(execution.startTime).toLocaleTimeString()} • Duration:{' '}
+            {t('Started:')} {new Date(execution.startTime).toLocaleTimeString()} • {t('Duration:')}{' '}
             {((execution.durationMs || 0) / 1000).toFixed(1)}s
           </div>
         </div>
@@ -101,11 +103,11 @@ export const ExecutionMonitor: React.FC<ExecutionMonitorProps> = ({
         <div style={{ display: 'flex', gap: 8 }}>
           {isRunning ? (
             <button className="btn btn-danger" onClick={onStop}>
-              <Square size={14} /> Stop Workflow
+              <Square size={14} /> {t('Stop Workflow')}
             </button>
           ) : (
             <button className="btn btn-secondary" onClick={onRetry}>
-              <RotateCcw size={14} /> Re-Run
+              <RotateCcw size={14} /> {t('Re-Run')}
             </button>
           )}
         </div>
@@ -123,7 +125,7 @@ export const ExecutionMonitor: React.FC<ExecutionMonitorProps> = ({
           }}
         >
           <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 10, color: 'var(--fg-muted)' }}>
-            WORKFLOW STEPS
+            {t('WORKFLOW STEPS')}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -169,7 +171,7 @@ export const ExecutionMonitor: React.FC<ExecutionMonitorProps> = ({
               gap: 6
             }}
           >
-            <Terminal size={14} /> OUTPUT LOGS
+            <Terminal size={14} /> {t('OUTPUT LOGS')}
           </div>
 
           <div
@@ -187,7 +189,7 @@ export const ExecutionMonitor: React.FC<ExecutionMonitorProps> = ({
             }}
           >
             {logs.length === 0 ? (
-              <span style={{ color: 'var(--fg-muted)' }}>Waiting for execution logs...</span>
+              <span style={{ color: 'var(--fg-muted)' }}>{t('Waiting for execution logs...')}</span>
             ) : (
               logs.map((line, idx) => (
                 <div key={idx} style={{ color: line.includes('[STDERR]') ? '#f85149' : 'inherit' }}>

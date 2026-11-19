@@ -223,6 +223,21 @@ Because Runly executes commands locally on your computer:
 
 ## ⌨️ Command Palette Integration
 
+### Navigation Layout
+
+Open **Runly → Settings → Navigation Position** to choose **Left** (default) or
+**Top** navigation. The layout changes immediately and is saved in VS Code user
+settings as `runly.navigationPosition`.
+
+### Interface Language
+
+Open **Runly → Settings → Language** to choose **English** (default) or
+**中文（简体）**. All Runly webview pages, node configuration panels, and dialogs
+switch immediately. The choice is saved in VS Code user settings as
+`runly.language`. This does not change VS Code commands, the native sidebar,
+workflow names, template content, user parameters, commands, or execution logs.
+In the standalone browser preview, settings apply only until the page reloads.
+
 Runly registers the following VS Code commands:
 
 - `Runly: Open Dashboard & Builder`

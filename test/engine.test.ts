@@ -39,6 +39,22 @@ import { ConditionEngine } from '../src/engine/ConditionEngine';
 import { WorkflowRunner } from '../src/engine/WorkflowRunner';
 import { ExecutionContext } from '../src/engine/ExecutionContext';
 import { Workflow } from '../src/models/Workflow';
+import { translate } from '../src/webview/translations';
+
+describe('Runly interface translations', () => {
+  test('switches interface labels between English and Simplified Chinese', () => {
+    assert.strictEqual(translate('en', 'Settings'), 'Settings');
+    assert.strictEqual(translate('zh-CN', 'Settings'), '设置');
+    assert.strictEqual(translate('zh-CN', 'Node Properties'), '节点属性');
+    assert.strictEqual(translate('zh-CN', 'Cancel'), '取消');
+  });
+
+  test('interpolates counts and preserves user text without recursive substitution', () => {
+    assert.strictEqual(translate('zh-CN', '{count} Steps', { count: 0 }), '0 个步骤');
+    assert.strictEqual(translate('en', 'Run {name}', { name: '部署 ${PORT} {count}' }), 'Run 部署 ${PORT} {count}');
+    assert.strictEqual(translate('zh-CN', 'Run {name}', { name: 'My workflow' }), '运行 My workflow');
+  });
+});
 
 describe('Runly Engine Unit Tests', () => {
   test('VariableResolver resolves built-in and env variables correctly', () => {
