@@ -162,6 +162,15 @@ button, input, select, textarea {
   position: relative;
 }
 
+.runly-page {
+  height: 100%;
+  min-height: 0;
+}
+
+.runly-page[hidden] {
+  display: none;
+}
+
 /* Button & Controls */
 .btn {
   display: inline-flex;

@@ -30,6 +30,7 @@ export interface Workflow {
 
 export interface WebviewIPCMessage {
   command:
+    | 'ready'
     | 'getWorkflows'
     | 'saveWorkflow'
     | 'deleteWorkflow'

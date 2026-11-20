@@ -141,7 +141,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     setSelectedNodeId(null);
   };
 
-  const handleSave = () => {
+  const getCurrentWorkflow = (): Workflow => {
     const updatedWorkflow: Workflow = {
       ...workflow,
       name: workflowName,
@@ -160,8 +160,9 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         targetHandle: e.targetHandle || undefined
       }))
     };
-    onSave(updatedWorkflow);
+    return updatedWorkflow;
   };
+  const handleSave = () => onSave(getCurrentWorkflow());
 
   const handleAutoLayout = () => {
     setNodes((nds) => {
@@ -212,7 +213,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
               <Square size={14} /> {t('Stop')}
             </button>
           ) : (
-            <button className="btn btn-primary" onClick={() => onRun({ ...workflow, name: workflowName })}>
+            <button className="btn btn-primary" onClick={() => onRun(getCurrentWorkflow())}>
               <Play size={14} /> {t('Run Workflow')}
             </button>
           )}

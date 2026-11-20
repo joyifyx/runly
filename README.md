@@ -226,22 +226,47 @@ Because Runly executes commands locally on your computer:
 
 ### Navigation Layout
 
-Open **Runly → Settings → Navigation Position** to choose **Left** (default) or
-**Top** navigation. The layout changes immediately and is saved in VS Code user
-settings as `runly.navigationPosition`.
+In VS Code, open **Runly** in the Activity Bar. The primary sidebar is the only
+global navigation: **Dashboard**, **Builder Canvas**, **Execution Monitor**,
+**History**, and **Settings**. All entries reuse one editor panel; there is no
+duplicate navigation bar inside the panel. Favorites, workflows, and templates
+remain below these entries. **Recent Runs** and **All Workflows** start collapsed;
+their expansion state is preserved when the tree refreshes. Selecting a template
+only focuses it; use its **Use Template** action to add a copy and open it in the
+builder. The categorized node library stays inside the canvas.
+
+Click a row or its **Open Workflow** icon under **All Workflows** or **Recent
+Runs** to open the saved workflow in the builder. If the workflow was deleted,
+Runly reports that it no longer exists and leaves the run record intact.
+Deleting an entry under **Recent Runs** removes only that execution record, not
+its workflow; the History page updates at the same time. **Recent Runs** remains
+visible with a count of zero when there is no history.
+
+Switching pages preserves the current canvas draft and execution state while
+the panel remains open. Select a workflow from the sidebar or Dashboard, or create
+one, to begin editing. Selecting another workflow replaces the current editor;
+save your changes before switching workflows or closing the panel.
+
+The standalone browser preview retains its navigation bar. Its
+**Settings → Navigation Position** control switches between **Left** (default)
+and **Top** for that preview. `runly.navigationPosition` does not change the native
+VS Code sidebar.
 
 ### Interface Language
 
 Open **Runly → Settings → Language** to choose **English** (default) or
-**中文（简体）**. All Runly webview pages, node configuration panels, and dialogs
-switch immediately. The choice is saved in VS Code user settings as
-`runly.language`. This does not change VS Code commands, the native sidebar,
+**中文（简体）**. Runly webview pages, node configuration panels, dialogs, and native
+sidebar navigation/category labels switch immediately. The choice is saved in
+VS Code user settings as `runly.language`. This does not change command-palette titles,
 workflow names, template content, user parameters, commands, or execution logs.
 In the standalone browser preview, settings apply only until the page reloads.
 
 Runly registers the following VS Code commands:
 
 - `Runly: Open Dashboard & Builder`
+- `Runly: Builder Canvas`
+- `Runly: Execution Monitor`
+- `Runly: History`
 - `Runly: New Workflow`
 - `Runly: Run Workflow`
 - `Runly: Stop Active Workflow`

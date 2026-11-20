@@ -32,4 +32,12 @@ export class HistoryStorage {
   public async clearHistory(): Promise<void> {
     await this.context.globalState.update(this.storageKey, []);
   }
+
+  public async deleteExecutionRecord(id: string): Promise<boolean> {
+    const history = await this.getHistory();
+    const remaining = history.filter((record) => record.id !== id);
+    if (remaining.length === history.length) return false;
+    await this.context.globalState.update(this.storageKey, remaining);
+    return true;
+  }
 }

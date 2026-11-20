@@ -57,13 +57,26 @@
   "contributes": {
     "commands": [
       {
+        "command": "runly.builder",
+        "title": "Runly: Builder Canvas"
+      },
+      {
+        "command": "runly.monitor",
+        "title": "Runly: Execution Monitor"
+      },
+      {
+        "command": "runly.history",
+        "title": "Runly: History"
+      },
+      {
         "command": "runly.open",
         "title": "Runly: Open Dashboard & Builder",
         "icon": "$(play-circle)"
       },
       {
         "command": "runly.newWorkflow",
-        "title": "Runly: New Workflow"
+        "title": "Runly: New Workflow",
+        "icon": "$(add)"
       },
       {
         "command": "runly.runWorkflow",
@@ -91,31 +104,43 @@
       },
       {
         "command": "runly.refreshSidebar",
-        "title": "Runly: Refresh Sidebar"
+        "title": "Runly: Refresh Sidebar",
+        "icon": "$(refresh)"
       },
       {
         "command": "runly.openWorkflowItem",
-        "title": "Runly: Open Workflow"
+        "title": "Runly: Open Workflow",
+        "icon": "$(edit)"
       },
       {
         "command": "runly.runWorkflowItem",
-        "title": "Runly: Run Workflow from Sidebar"
+        "title": "Runly: Run Workflow from Sidebar",
+        "icon": "$(play)"
       },
       {
         "command": "runly.deleteWorkflowItem",
-        "title": "Runly: Delete Workflow"
+        "title": "Runly: Delete Workflow",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "runly.deleteHistoryItem",
+        "title": "Runly: Delete Run",
+        "icon": "$(trash)"
       },
       {
         "command": "runly.duplicateWorkflowItem",
-        "title": "Runly: Duplicate Workflow"
+        "title": "Runly: Duplicate Workflow",
+        "icon": "$(copy)"
       },
       {
         "command": "runly.exportWorkflowItem",
-        "title": "Runly: Export Workflow Item"
+        "title": "Runly: Export Workflow Item",
+        "icon": "$(export)"
       },
       {
         "command": "runly.useTemplateFromTree",
-        "title": "Runly: Use Template"
+        "title": "Runly: Use Template",
+        "icon": "$(add)"
       }
     ],
     "menus": {
@@ -140,17 +165,17 @@
         {
           "command": "runly.openWorkflowItem",
           "group": "inline",
-          "when": "view == runly.sidebarView && viewItem == workflow"
+          "when": "view == runly.sidebarView && (viewItem == workflow || viewItem == history)"
         },
         {
           "command": "runly.runWorkflowItem",
           "group": "inline",
-          "when": "view == runly.sidebarView && viewItem == workflow"
+          "when": "view == runly.sidebarView && (viewItem == workflow || viewItem == history)"
         },
         {
           "command": "runly.duplicateWorkflowItem",
           "group": "inline",
-          "when": "view == runly.sidebarView && viewItem == workflow"
+          "when": "view == runly.sidebarView && (viewItem == workflow || viewItem == history)"
         },
         {
           "command": "runly.deleteWorkflowItem",
@@ -158,9 +183,14 @@
           "when": "view == runly.sidebarView && viewItem == workflow"
         },
         {
+          "command": "runly.deleteHistoryItem",
+          "group": "inline",
+          "when": "view == runly.sidebarView && viewItem == history"
+        },
+        {
           "command": "runly.exportWorkflowItem",
           "group": "inline",
-          "when": "view == runly.sidebarView && viewItem == workflow"
+          "when": "view == runly.sidebarView && (viewItem == workflow || viewItem == history)"
         },
         {
           "command": "runly.useTemplateFromTree",
@@ -203,14 +233,14 @@
           "enum": ["en", "zh-CN"],
           "enumDescriptions": ["English", "简体中文"],
           "default": "en",
-          "description": "Display language for the Runly webview interface."
+          "description": "Display language for the Runly interface and sidebar entries."
         },
         "runly.navigationPosition": {
           "type": "string",
           "enum": ["top", "left"],
           "enumDescriptions": ["Show navigation above the content.", "Show navigation in a left sidebar."],
           "default": "left",
-          "description": "Position of the Runly navigation. Changes apply immediately when selected in Runly Settings."
+          "description": "Navigation position in standalone browser previews. In VS Code, global navigation is provided by the native Runly sidebar."
         },
         "runly.defaultShell": {
           "type": "string",

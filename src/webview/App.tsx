@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import './styles/vscode.css';
 import { LanguageContext, translate } from './i18n';
+import { isRunlyView, RunlyView } from '../models/Navigation';
 
 // Declare VS Code Webview API
 declare function acquireVsCodeApi(): {
@@ -33,7 +34,7 @@ declare function acquireVsCodeApi(): {
 const vscodeApi = typeof acquireVsCodeApi === 'function' ? acquireVsCodeApi() : null;
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'canvas' | 'monitor' | 'history' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<RunlyView>('dashboard');
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [history, setHistory] = useState<ExecutionRecord[]>([]);
   const [settings, setSettings] = useState<RunlySettings>({
@@ -62,16 +63,15 @@ export const App: React.FC = () => {
 
   // Initial data load via IPC
   useEffect(() => {
-    if (vscodeApi) {
-      vscodeApi.postMessage({ command: 'getWorkflows' });
-      vscodeApi.postMessage({ command: 'getHistory' });
-      vscodeApi.postMessage({ command: 'getSettings' });
-      vscodeApi.postMessage({ command: 'getDetectedProject' });
-    }
-
     const messageListener = (event: MessageEvent) => {
       const msg = event.data;
       switch (msg.command) {
+        case 'navigate':
+          if (isRunlyView(msg.payload?.view)) {
+            if (msg.payload.workflow) setActiveWorkflow(msg.payload.workflow);
+            setActiveTab(msg.payload.view);
+          }
+          break;
         case 'workflowsLoaded':
           setWorkflows(msg.payload || []);
           break;
@@ -105,6 +105,13 @@ export const App: React.FC = () => {
     };
 
     window.addEventListener('message', messageListener);
+    if (vscodeApi) {
+      vscodeApi.postMessage({ command: 'ready' });
+      vscodeApi.postMessage({ command: 'getWorkflows' });
+      vscodeApi.postMessage({ command: 'getHistory' });
+      vscodeApi.postMessage({ command: 'getSettings' });
+      vscodeApi.postMessage({ command: 'getDetectedProject' });
+    }
     return () => window.removeEventListener('message', messageListener);
   }, []);
 
@@ -155,6 +162,7 @@ export const App: React.FC = () => {
   };
 
   const handleRunWorkflow = (wf: Workflow) => {
+    setActiveWorkflow(wf);
     // Check if parameter values are needed
     if (wf.parameters && wf.parameters.length > 0) {
       setParameterDialogWorkflow(wf);
@@ -245,9 +253,9 @@ export const App: React.FC = () => {
 
   return (
     <LanguageContext.Provider value={settings.language}>
-    <div className={`runly-app navigation-${settings.navigationPosition}`}>
+    <div className={`runly-app navigation-${vscodeApi ? 'native' : settings.navigationPosition}`}>
       {/* Top Navbar */}
-      <div className="navbar">
+      {!vscodeApi && <div className="navbar">
         <div className="brand">
           <PlayCircle size={20} className="brand-logo" />
           <span>RUNLY</span>
@@ -285,7 +293,7 @@ export const App: React.FC = () => {
             <Settings size={14} /> {t('Settings')}
           </button>
         </nav>
-      </div>
+      </div>}
 
       {/* Main View Area */}
       <div className="main-content">
@@ -309,31 +317,25 @@ export const App: React.FC = () => {
           />
         )}
 
-        {activeTab === 'canvas' && (
-          <WorkflowCanvas
-            workflow={
-              activeWorkflow || {
-                version: 1,
-                id: 'default',
-                name: 'New Workflow',
-                nodes: [
-                  {
-                    id: 'start',
-                    type: 'start',
-                    label: 'START',
-                    position: { x: 100, y: 100 },
-                    config: {}
-                  }
-                ],
-                edges: []
-              }
-            }
-            onSave={handleSaveWorkflow}
-            onRun={handleRunWorkflow}
-            onStop={handleStopWorkflow}
-            isExecuting={activeExecution?.status === 'RUNNING'}
-          />
-        )}
+        <div className="runly-page" hidden={activeTab !== 'canvas'}>
+          {activeWorkflow ? (
+            <WorkflowCanvas
+              key={activeWorkflow.id}
+              workflow={activeWorkflow}
+              onSave={handleSaveWorkflow}
+              onRun={handleRunWorkflow}
+              onStop={handleStopWorkflow}
+              isExecuting={activeExecution?.status === 'RUNNING'}
+            />
+          ) : (
+            <div className="flex-center-center" style={{ height: '100%', gap: 12, padding: 24 }}>
+              <p>{t('Select a workflow or create a new one to start editing.')}</p>
+              <button className="btn btn-primary" onClick={handleNewWorkflow}>
+                <Plus size={14} /> {t('New Workflow')}
+              </button>
+            </div>
+          )}
+        </div>
 
         {activeTab === 'monitor' && (
           <ExecutionMonitor
@@ -357,7 +359,7 @@ export const App: React.FC = () => {
         )}
 
         {activeTab === 'settings' && (
-          <SettingsView settings={settings} onUpdateSetting={handleUpdateSetting} />
+          <SettingsView settings={settings} onUpdateSetting={handleUpdateSetting} showNavigationPosition={!vscodeApi} />
         )}
       </div>
 

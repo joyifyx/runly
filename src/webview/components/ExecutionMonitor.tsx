@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { ExecutionContext } from '../../engine/ExecutionContext';
 import { ExecutionRecord } from '../../models/Execution';
 import { useTranslation } from '../i18n';
 import {
@@ -14,7 +13,7 @@ import {
 } from 'lucide-react';
 
 interface ExecutionMonitorProps {
-  execution: ExecutionRecord | ExecutionContext | null;
+  execution: ExecutionRecord | null;
   onStop: () => void;
   onRetry: () => void;
 }

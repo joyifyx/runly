@@ -6,11 +6,13 @@ import { useTranslation } from '../i18n';
 interface SettingsViewProps {
   settings: RunlySettings;
   onUpdateSetting: (key: keyof RunlySettings, value: any) => void;
+  showNavigationPosition?: boolean;
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
   settings,
-  onUpdateSetting
+  onUpdateSetting,
+  showNavigationPosition = true
 }) => {
   const t = useTranslation();
   return (
@@ -57,7 +59,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             {t('Choose the display language for the Runly interface.')}
           </p>
         </div>
-        <div>
+        {showNavigationPosition && <div>
           <label htmlFor="navigation-position" style={{ display: 'block', fontWeight: 500, marginBottom: 4, fontSize: 13 }}>
             {t('Navigation Position')}
           </label>
@@ -78,7 +80,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <p style={{ fontSize: 11, color: 'var(--fg-muted)', marginTop: 4 }}>
             {t('Place the navigation above the content or in a left sidebar.')}
           </p>
-        </div>
+        </div>}
 
         <div>
           <label style={{ display: 'block', fontWeight: 500, marginBottom: 4, fontSize: 13 }}>

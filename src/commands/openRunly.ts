@@ -7,9 +7,14 @@ import { SettingsStorage } from '../storage/SettingsStorage';
 import { WorkflowEngine } from '../engine/WorkflowEngine';
 import { ProjectDetector } from '../detection/ProjectDetector';
 import { Workflow } from '../models/Workflow';
+import { RunlyView } from '../models/Navigation';
 
 export class RunlyWebviewPanel {
   public static currentPanel: RunlyWebviewPanel | undefined;
+  private static readonly dataChanges = new vscode.EventEmitter<void>();
+  public static readonly onDidChangeData = RunlyWebviewPanel.dataChanges.event;
+  private ready = false;
+  private pendingNavigation?: { view: RunlyView; workflow?: Workflow };
   private readonly panel: vscode.WebviewPanel;
   private readonly extensionUri: vscode.Uri;
   private readonly workflowStorage: WorkflowStorage;
@@ -23,7 +28,8 @@ export class RunlyWebviewPanel {
     workflowStorage: WorkflowStorage,
     historyStorage: HistoryStorage,
     settingsStorage: SettingsStorage,
-    workflowEngine: WorkflowEngine
+    workflowEngine: WorkflowEngine,
+    view: RunlyView = 'dashboard'
   ) {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
@@ -31,6 +37,7 @@ export class RunlyWebviewPanel {
 
     if (RunlyWebviewPanel.currentPanel) {
       RunlyWebviewPanel.currentPanel.panel.reveal(column);
+      RunlyWebviewPanel.currentPanel.navigate(view);
       return;
     }
 
@@ -53,6 +60,7 @@ export class RunlyWebviewPanel {
       settingsStorage,
       workflowEngine
     );
+    RunlyWebviewPanel.currentPanel.navigate(view);
   }
 
   public static openWorkflow(
@@ -68,13 +76,23 @@ export class RunlyWebviewPanel {
       workflowStorage,
       historyStorage,
       settingsStorage,
-      workflowEngine
+      workflowEngine,
+      'canvas'
     );
-    setTimeout(() => {
-      if (RunlyWebviewPanel.currentPanel) {
-        RunlyWebviewPanel.currentPanel.postMessage('openWorkflow', workflow);
+    RunlyWebviewPanel.currentPanel?.navigate('canvas', workflow);
+  }
+
+  private navigate(view: RunlyView, workflow?: Workflow): void {
+    const navigation = { view, workflow };
+    if (this.ready) {
+      this.postMessage('navigate', navigation);
+      if (view === 'monitor') {
+        const active = this.workflowEngine.getActiveExecution();
+        if (active) this.postMessage('executionProgress', active.toRecord());
       }
-    }, 200);
+    } else {
+      this.pendingNavigation = { view, workflow: workflow ?? this.pendingNavigation?.workflow };
+    }
   }
 
   private constructor(
@@ -92,8 +110,6 @@ export class RunlyWebviewPanel {
     this.settingsStorage = settingsStorage;
     this.workflowEngine = workflowEngine;
 
-    this.panel.webview.html = this.getHtmlForWebview(this.panel.webview);
-
     this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
 
     // Handle messages from Webview
@@ -104,10 +120,21 @@ export class RunlyWebviewPanel {
       null,
       this.disposables
     );
+    this.panel.webview.html = this.getHtmlForWebview(this.panel.webview);
   }
 
   private async handleMessage(message: any) {
     switch (message.command) {
+      case 'ready': {
+        this.ready = true;
+        if (this.pendingNavigation) {
+          this.postMessage('navigate', this.pendingNavigation);
+          this.pendingNavigation = undefined;
+        }
+        const active = this.workflowEngine.getActiveExecution();
+        if (active) this.postMessage('executionProgress', active.toRecord());
+        break;
+      }
       case 'getWorkflows': {
         const workflows = await this.workflowStorage.loadAllWorkflows();
         this.postMessage('workflowsLoaded', workflows);
@@ -149,6 +176,7 @@ export class RunlyWebviewPanel {
           this.postMessage('executionProgress', context.toRecord());
         }).then((record) => {
           this.postMessage('executionFinished', record);
+          RunlyWebviewPanel.dataChanges.fire();
           if (settings.showNotifications) {
             if (record.status === 'SUCCESS') {
               vscode.window.showInformationMessage(`Runly: "${workflow.name}" completed successfully.`);
@@ -225,6 +253,9 @@ export class RunlyWebviewPanel {
       }
       default:
         break;
+    }
+    if (['saveWorkflow', 'deleteWorkflow', 'duplicateWorkflow', 'importWorkflow', 'clearHistory'].includes(message.command)) {
+      RunlyWebviewPanel.dataChanges.fire();
     }
   }
 
